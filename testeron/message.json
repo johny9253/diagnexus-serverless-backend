@@ -1,0 +1,7 @@
+{
+  "Records": [
+    {
+      "body": "{\"patient_id\":\"P78910\",\"test_type\":\"Blood Sugar\",\"value\":245,\"Limit\":200,\"unit\":\"mg/dL\",\"timestamp\":\"2025-05-13T09:45:00Z\"}"
+    }
+  ]
+}

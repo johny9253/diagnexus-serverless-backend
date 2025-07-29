@@ -1,0 +1,38 @@
+service: sqs-s3-pipeline
+frameworkVersion: '3'
+
+plugins:
+  - serverless-plugin-typescript
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    OUTPUT_SQS_URL: ${env:OUTPUT_SQS_URL}
+    S3_BUCKET: ${env:S3_BUCKET}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: "arn:aws:s3:::${env:S3_BUCKET}/*"
+
+functions:
+  processMessages:
+    handler: handler/processMessages.handler
+    events:
+      - sqs:
+          arn: ${env:INPUT_SQS_ARN}
+
+  saveToS3:
+    handler: handler/saveToS3.handler
+    events:
+      - sqs:
+          arn: ${env:OUTPUT_SQS_ARN}

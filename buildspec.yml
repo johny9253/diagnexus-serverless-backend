@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Installing dependencies..."
+      - npm ci
+
+  pre_build:
+    commands:
+      - echo "Running tests..."
+      - npm test
+      # optionally: run coverage or lint
+      # - npm run lint
+      # - npm run test:coverage
+
+  build:
+    commands:
+      - echo "Building Lambda ZIP..."
+      - mkdir -p dist
+      - npm run build
+      - zip -r lambda.zip dist/ node_modules/ package.json
+
+  post_build:
+    commands:
+      - echo "Uploading ZIP to S3..."
+      - aws s3 cp lambda.zip s3://diagnexus-deployement-pkg/lambda.zip
+
+artifacts:
+  files:
+    - lambda.zip
